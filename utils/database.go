@@ -17,9 +17,7 @@ const (
 )
 
 func GetConnection() *sqlx.DB {
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s"+
-		"password=%s dbname=%s sslode=disable",
-		host, port, user, password, dbname)
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {

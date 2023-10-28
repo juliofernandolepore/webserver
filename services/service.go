@@ -10,8 +10,10 @@ import (
 	"github.com/juliofernandolepore/webserver/models"
 )
 
+var dbconn *sqlx.DB
+
 func SetDB(db *sqlx.DB) {
-	dbconn := db
+	dbconn = db
 }
 
 func GetAllPosts(w http.ResponseWriter, r *http.Request) {
@@ -34,17 +36,17 @@ func GetAllPosts(w http.ResponseWriter, r *http.Request) {
 		case sql.ErrNoRows:
 			{
 				log.Println("no rows returned.")
-				http.Error(w, err.Error(), 204)
+				http.Error(w, err.Error(), http.StatusNoContent)
 			}
 		case nil:
 			json.NewEncoder(w).Encode(&posts)
 
 		default:
-			http.Error(w, err.Error(), 400)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	} else {
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
