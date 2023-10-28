@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/juliofernandolepore/webserver/models"
 )
@@ -14,6 +16,31 @@ var dbconn *sqlx.DB
 
 func SetDB(db *sqlx.DB) {
 	dbconn = db
+}
+
+func GetPost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	var searchpost = models.GetPost()
+
+	sqlStmt := `SELECT * FROM posts WHERE id=$1`
+	row := dbconn.QueryRowx(sqlStmt, id)
+	switch err := row.StructScan(&searchpost); err {
+	case sql.ErrNoRows:
+		{
+			log.Println("no rows returned")
+			http.Error(w, err.Error(), http.StatusNoContent)
+		}
+	case nil:
+		{
+			json.NewEncoder(w).Encode(&searchpost)
+		}
+	default:
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
 
 func GetAllPosts(w http.ResponseWriter, r *http.Request) {
