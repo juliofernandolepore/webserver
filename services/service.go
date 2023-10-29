@@ -98,3 +98,23 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	log.Println("nwe record ID is:", id)
 	json.NewEncoder(w).Encode(&post)
 }
+
+func UpdatePost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+
+	post := models.GetPost()
+	_ = json.NewDecoder(r.Body).Decode(&post)
+	post.ID, _ = strconv.Atoi(params["id"]) //save in int because struct ID is int
+
+	id := 0
+	sqlStmt := `UPDATE posts SET title=$1, body=$2 WHERE id=$3 RETURNING id`
+	err := dbconn.QueryRow(sqlStmt, post.Title, post.Body, params["id"]).Scan(&id)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.Println("update record ID is:", id)
+	json.NewEncoder(w).Encode(&post)
+}
