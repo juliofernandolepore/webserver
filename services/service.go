@@ -118,3 +118,19 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	log.Println("update record ID is:", id)
 	json.NewEncoder(w).Encode(&post)
 }
+
+func DeletePost(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var params = mux.Vars(r)
+	var err error
+	var id = 0
+	var sqlStmt = `DELETE FROM posts WHERE id=$1 RETURNING id`
+	err = dbconn.QueryRow(sqlStmt, params["id"]).Scan(&id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.Println("deleted record ID is:", id)
+	json.NewEncoder(w).Encode(id)
+
+}
