@@ -10,10 +10,10 @@ import (
 
 const (
 	host     = "localhost"
-	port     = "6543"
+	port     = "5432"
 	user     = "postgres"
-	password = "supersecretpassword"
-	dbname   = "postgres"
+	password = "Password123."
+	dbname   = "posts"
 )
 
 func GetConnection() *sqlx.DB {

@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  servicio-db:
+    image: postgres:16.1
+    container_name:
+      contenedor-postgres    
+    ports:
+       - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: Password123.
+      POSTGRES_USER: postgres
+      POSTGRES_DB: posts
